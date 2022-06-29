@@ -1,0 +1,20 @@
+{
+    "name": "HiResClock",
+    "keywords": "ARM, pjrc, clock, std::chrono, High Resolution, Teensy",
+    "description": "The HiResClock library implements an std::chrono compatible clock for ARM controllers which implement the ARM_DWT_CYCCNT cycle counter (e.g. Teensy 3.x, 4.x) It counts time in nanoseconds since 1970-01-01 00:00. HiResClock uses the ARM Cycle counter as time base.",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/luni64/HiResClock"
+    },
+    "authors":
+    {
+      "name": "luni64",
+      "url": "https://github.com/luni64",
+      "maintainer": true
+    },
+    "homepage": "https://github.com/luni64/HiResClock",
+    "version": "0.1.0",
+    "frameworks": "arduino",
+    "platforms": "Teensy"
+  }
