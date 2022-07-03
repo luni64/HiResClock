@@ -21,7 +21,6 @@ AlignConsecutiveAssignments: true
 NamespaceIndentation: All
 FixNamespaceComments: false
 
-IndentPPDirectives: AfterHash
 
 CompactNamespaces: true
 
