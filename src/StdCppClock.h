@@ -30,13 +30,12 @@ struct StdCppClock
     static rep t0; // offset to adjust time (seconds from 1.1.1970 to now).
 };
 
-
 // Inline implementation =====================================================================
 
 template <typename TickSource>
 void StdCppClock<TickSource>::begin(bool sync)
 {
-   TickSource::begin();
+    TickSource::begin();
     if (sync) syncToRTC();
 }
 
@@ -58,7 +57,7 @@ typename StdCppClock<TickSource>::time_point StdCppClock<TickSource>::from_time_
 template <typename TickSource>
 void StdCppClock<TickSource>::syncToRTC()
 {
-   // t0 = ((rep)rtc_get()) * F_CPU - TickSource::getTicks();
+    t0 = ((rep)TickSource::getRTC()) * F_CPU - TickSource::getTicks();
 }
 
 template <typename TickSource>

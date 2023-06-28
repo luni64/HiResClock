@@ -33,6 +33,11 @@ class T4X_Source
         return curVal;
     }
 
+    static tickType getRTC()
+    {
+        return (tickType) rtc_get();
+    }
+
  protected:
     static uint32_t oldLow;
     static uint32_t curHigh;

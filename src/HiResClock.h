@@ -10,8 +10,9 @@
 using HiResClock = StdCppClock<T4X_Source>;
 
 #elif defined(KINETISK)                   //Teensy 3X
-#include "clockSources/T3xSource.h"
-using HiResClock = HiResClock<T3X_Source>;
+#error "Not yet implemented"
+//#include "clockSources/T3xSource.h"
+//using HiResClock = HiResClock<T3X_Source>;
 
 #elif defined(KINETISL)                   //Teensy LC
 #error "Doesn't support TeensyLC"
@@ -22,13 +23,14 @@ using HiResClock = HiResClock<T3X_Source>;
 //Thus, we need to provide the clock frequency manually for the
 // various boards.
 #elif defined(ARDUINO_ARCH_STM32)
-    #if defined(STM32F4xx)
-        #include "clockSources/STM32F4xx.h"
-        #include "STM32RTC.h"
-        #if defined(STM32F401xE)
-            using HiResClock = HiResClock<TickSource_t<84'000'000>>;
-        #elif defined(STM32F411xE)
-            using HiResClock = HiResClock<TickSource_t<100'000'000>>;
-        #endif
-    #endif
+#error "Not yet implemented"
+    // #if defined(STM32F4xx)
+    //     #include "clockSources/STM32F4xx.h"
+    //     #include "STM32RTC.h"
+    //     #if defined(STM32F401xE)
+    //         using HiResClock = HiResClock<TickSource_t<84'000'000>>;
+    //     #elif defined(STM32F411xE)
+    //         using HiResClock = HiResClock<TickSource_t<100'000'000>>;
+    //     #endif
+    // #endif
 #endif
