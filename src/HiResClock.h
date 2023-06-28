@@ -1,65 +1,34 @@
-#pragma once
-
+#include "Arduino.h"
 #include <chrono>
+#include "StdCppClock.h"
 
-template <typename TickSource>
-struct HiResClock
-{
-    // required typedefs:
-    using duration   = typename TickSource::tickDuration; // use a uint64_t representation with a time step of 1/F_CPU (=1.667ns @600MHz)
-    using rep        = typename duration::rep;            // uint64_t
-    using period     = typename duration::period;         // std::ratio<1,600'000'000>
-    using time_point = std::chrono::time_point<HiResClock, duration>;
+// PJRC Teensy boards ==========================================
+#if defined(TEENSYDUINO)
 
-    static constexpr bool is_steady = false; // can not be guaranteed to be steady (could be readjusted by syncToRTC)
+#if defined(__IMXRT1062__)                // Teensy 4X and Teensy MM
+#include "clockSources/T4xSource.h"
+using HiResClock = StdCppClock<T4X_Source>;
 
-    static time_point now()
-    {
-        duration t = duration(t0 + TickSource::getTicks()); // adds the current 64bit cycle counter to an offset set by syncToRTC() (default: t0=0)
-        return time_point(t);                               // ... and returns the corresponding time point.
-    }
+#elif defined(KINETISK)                   //Teensy 3X
+#include "clockSources/T3xSource.h"
+using HiResClock = HiResClock<T3X_Source>;
 
-    static void begin(bool sync = true); // starts the 64bit cycle counter update interrupt. Sync=true syncs the clock to the RTC
-    static void syncToRTC();             // Sync to RTC whenever needed (e.g. after adjusting the RTC)
+#elif defined(KINETISL)                   //Teensy LC
+#error "Doesn't support TeensyLC"
+#endif
 
-    // Map to C API
-    static std::time_t to_time_t(const time_point& t); // returns the time_t value (seconds since 1.1.1970) to be used with standard C-API functions
-    static time_point from_time_t(std::time_t t);      // converts a time_t value to a time_point
-
- private:
-    static rep t0; // offset to adjust time (seconds from 1.1.1970 to now).
-};
-
-
-// Inline implementation =====================================================================
-
-template <typename TickSource>
-void HiResClock<TickSource>::begin(bool sync)
-{
-   TickSource::begin();
-    if (sync) syncToRTC();
-}
-
-template <typename TickSource>
-std::time_t HiResClock<TickSource>::to_time_t(const time_point& t)
-{
-    using namespace std::chrono;
-    return std::time_t(duration_cast<seconds>(t.time_since_epoch()).count());
-}
-
-template <typename TickSource>
-typename HiResClock<TickSource>::time_point HiResClock<TickSource>::from_time_t(std::time_t t)
-{
-    using namespace std::chrono;
-    typedef std::chrono::time_point<HiResClock, seconds> from;
-    return time_point_cast<duration>(from(seconds(t)));
-}
-
-template <typename TickSource>
-void HiResClock<TickSource>::syncToRTC()
-{
-   // t0 = ((rep)rtc_get()) * F_CPU - TickSource::getTicks();
-}
-
-template <typename TickSource>
-typename HiResClock<TickSource>::rep HiResClock<TickSource>::t0 = 0;
+//STM boards ===================================================
+//unfortunately F_CPU is not a compile-time constant in STM32duino.
+//Thus, we need to provide the clock frequency manually for the
+// various boards.
+#elif defined(ARDUINO_ARCH_STM32)
+    #if defined(STM32F4xx)
+        #include "clockSources/STM32F4xx.h"
+        #include "STM32RTC.h"
+        #if defined(STM32F401xE)
+            using HiResClock = HiResClock<TickSource_t<84'000'000>>;
+        #elif defined(STM32F411xE)
+            using HiResClock = HiResClock<TickSource_t<100'000'000>>;
+        #endif
+    #endif
+#endif
