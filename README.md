@@ -1,5 +1,10 @@
 ## High Resolution Clock for 32bit ARM boards (currently implemented for Teensy 4.1 only)
 
+The clock uses the main clock of a T4.x (600MHz) as time-base for a `std::chrono` compatible clock. Resolution is 1/600MHz = 1.66ns.
+
+By default `HiResClock::begin()` synchronizes the clock with the RTC.
+
+
 A few useless usage examples
 
 ```c++
