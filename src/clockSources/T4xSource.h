@@ -22,7 +22,7 @@ class T4X_Source
     static tickType getTicks()
     {
         uint32_t monitor; // used to monitor if an interrupt occured in the critical section
-        uint32_t curVal;
+        uint64_t curVal;
 
         do { // interrupts between __LDREXW and _STREXW make the STREXW call failing, in this case we recalculate (see https://community.arm.com/support-forums/f/architectures-and-processors-forum/10361/ldrex-strex-on-the-m3-m4-m7/33045#33045)
             __LDREXW(&monitor);
@@ -35,7 +35,7 @@ class T4X_Source
             oldLow = curLow;
             curVal = ((uint64_t)curHigh << 32) | curLow;
 
-        } while (__STREXW(1, &monitor)); // returns != 0 if an interrupt occured in the block
+        } while (__STREXW(1, &monitor)); // returns != 0 if an interrupt occurred in the block
 
         return curVal;
     }
